@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime, timedelta
 
 from .utils import (
@@ -9,12 +10,14 @@ from .errors import ClientNotAuthorized
 
 from typing import Optional
 
+sys.path.append("app/downloader/crdownloader/CR_Alpha")
 import crunpyroll
+
 
 class Session:
     def __init__(
-        self,
-        client: "crunpyroll.Client"
+            self,
+            client: "crunpyroll.Client"
     ):
         self._client: crunpyroll.Client = client
 
@@ -25,32 +28,34 @@ class Session:
     @property
     def is_authorized(self):
         return bool(self.access_token and self.refresh_token)
-    
+
     @property
     def authorization_header(self):
         return {"Authorization": f"Bearer {self.access_token}"}
-    
+
     async def retrieve(self) -> None:
         if not self.is_authorized:
             raise ClientNotAuthorized("Client is not authorized yet.")
         date = get_date()
         if date >= self.expiration:
             await self.refresh()
-    
-    async def authorize(self) -> Optional[bool]:
+
+    async def authorize(self, cookie: str) -> Optional[bool]:
         response = await self._client.api_request(
             method="POST",
             endpoint="auth/v1/token",
             headers={
-                "Authorization": f"Basic {PUBLIC_TOKEN}"
+                "Authorization": f"Basic {PUBLIC_TOKEN}",
+                "Etp-Anonymous-Id": "f4f2417f-6f61-4e8c-9df7-0f91fff3a7e5",
+                "cookie": cookie
             },
             payload={
-                "username": self._client.email,
-                "password": self._client.password,
-                "grant_type": "password",
-                "scope": "offline_access",
+                # "username": self._client.email,
+                # "password": self._client.password,
+                "grant_type": "etp_rt_cookie",
+                # "scope": "offline_access",
                 "device_id": self._client.device_id,
-                "device_name": self._client.device_name,
+                # "device_name": self._client.device_name,
                 "device_type": self._client.device_type
             }, include_session=False
         )
@@ -60,7 +65,7 @@ class Session:
             seconds=response.get("expires_in")
         )
         return True
-    
+
     async def refresh(self) -> Optional[bool]:
         response = await self._client.api_request(
             method="POST",

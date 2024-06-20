@@ -2,7 +2,7 @@ from typing import Optional, List, Dict
 from datetime import datetime
 from uuid import uuid4
 
-PUBLIC_TOKEN = "bm12anNoZmtueW14eGtnN2ZiaDk6WllJVnJCV1VQYmNYRHRiRDIyVlNMYTZiNFdRb3Mzelg="
+PUBLIC_TOKEN = "bm9haWhkZXZtXzZpeWcwYThsMHE6"
 
 APP_VERSION = "3.54.0"
 

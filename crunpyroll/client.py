@@ -19,6 +19,7 @@ from typing import (
 import httpx
 import json
 
+
 class Client(Object, Methods):
     """Initialize Crunchyroll Client
     
@@ -44,17 +45,18 @@ class Client(Object, Methods):
             Proxies for HTTP requests.
             Default to None
     """
+
     def __init__(
-        self,
-        *,
-        email: str,
-        password: str,
-        preferred_audio_language: str = "ja-JP",
-        locale: str = "en-US",
-        device_id: str = DEVICE_ID,
-        device_name: str = DEVICE_NAME,
-        device_type: str = DEVICE_TYPE,
-        proxies: Union[Dict, str] = None
+            self,
+            *,
+            email: str,
+            password: str,
+            preferred_audio_language: str = "ja-JP",
+            locale: str = "en-US",
+            device_id: str = DEVICE_ID,
+            device_name: str = DEVICE_NAME,
+            device_type: str = DEVICE_TYPE,
+            proxies: Union[Dict, str] = None
     ) -> None:
         self.email: str = email
         self.password: str = password
@@ -67,16 +69,16 @@ class Client(Object, Methods):
         self.http = httpx.AsyncClient(proxies=proxies, timeout=15)
         self.session = Session(self)
 
-    async def start(self):
+    async def start(self, cookie: str):
         if self.session.is_authorized:
             raise CrunpyrollException("Client is already authorized and started.")
-        return await self.session.authorize()
+        return await self.session.authorize(cookie)
 
     @staticmethod
     def parse_response(
-        response: httpx.Response,
-        *,
-        method: str = "GET",
+            response: httpx.Response,
+            *,
+            method: str = "GET",
     ) -> Optional[Union[Dict, str]]:
         status_code = response.status_code
         text_content = response.text
@@ -92,15 +94,15 @@ class Client(Object, Methods):
         raise CrunpyrollException(message)
 
     async def api_request(
-        self,
-        method: str,
-        endpoint: str,
-        host: APIHost = APIHost.BETA,
-        url: str = None,
-        params: Dict = None,
-        headers: Dict = None,
-        payload: Dict = None,
-        include_session: bool = True,
+            self,
+            method: str,
+            endpoint: str,
+            host: APIHost = APIHost.BETA,
+            url: str = None,
+            params: Dict = None,
+            headers: Dict = None,
+            payload: Dict = None,
+            include_session: bool = True,
     ) -> Optional[Dict]:
         if not url:
             url = "https://" + host.value + "/" + endpoint
@@ -117,11 +119,11 @@ class Client(Object, Methods):
             data=payload
         )
         return Client.parse_response(response, method=method)
-    
+
     async def manifest_request(
-        self,
-        url: str,
-        headers: Dict = None,
+            self,
+            url: str,
+            headers: Dict = None,
     ) -> str:
         api_headers = get_api_headers(headers)
         if self.session.is_authorized:

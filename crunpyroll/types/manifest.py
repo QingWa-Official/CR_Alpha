@@ -44,7 +44,12 @@ class Manifest(Object):
         data["content_protection"] = {}
         manifest = xmltodict.parse(obj)
         for aset in manifest["MPD"]["Period"]["AdaptationSet"]:
-            template = aset["SegmentTemplate"]
+            # 检查 SegmentTemplate 键是否存在
+            template = aset.get("SegmentTemplate")
+            if not template:
+                print("Warning: Missing 'SegmentTemplate' in AdaptationSet")
+                continue
+
             for drm in aset["ContentProtection"]:
                 scheme_id_uri = drm["@schemeIdUri"]
                 if scheme_id_uri == WIDEVINE_UUID:
@@ -54,6 +59,7 @@ class Manifest(Object):
                 if scheme_id_uri == PLAYREADY_UUID:
                     data["content_protection"]["playready"] = {}
                     data["content_protection"]["playready"]["pssh"] = drm["mspr:pro"]
+
             for repr in aset["Representation"]:
                 if repr.get("@mimeType").startswith("video"):
                     stream = ManifestVideoStream.parse(repr, template)
@@ -61,6 +67,7 @@ class Manifest(Object):
                 elif repr.get("@mimeType").startswith("audio"):
                     stream = ManifestAudioStream.parse(repr, template)
                     data["audio_streams"].append(stream)
+
         return cls(data)
 
 class ManifestVideoStream(Object):
