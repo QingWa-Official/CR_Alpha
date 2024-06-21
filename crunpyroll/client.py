@@ -56,7 +56,8 @@ class Client(Object, Methods):
             device_id: str = DEVICE_ID,
             device_name: str = DEVICE_NAME,
             device_type: str = DEVICE_TYPE,
-            proxies: Union[Dict, str] = None
+            proxies: Union[Dict, str] = None,
+            cookies: str
     ) -> None:
         self.email: str = email
         self.password: str = password
@@ -65,14 +66,14 @@ class Client(Object, Methods):
         self.device_id: str = device_id
         self.device_name: str = device_name
         self.device_type: str = device_type
-
+        self.cookies: str = cookies
         self.http = httpx.AsyncClient(proxies=proxies, timeout=15)
         self.session = Session(self)
 
-    async def start(self, cookie: str):
+    async def start(self):
         if self.session.is_authorized:
             raise CrunpyrollException("Client is already authorized and started.")
-        return await self.session.authorize(cookie)
+        return await self.session.authorize(cookie=self.cookies)
 
     @staticmethod
     def parse_response(
