@@ -78,10 +78,12 @@ class Session:
             },
             payload={
                 "refresh_token": self.refresh_token,
-                "grant_type": "refresh_token",
-                "scope": "offline_access",
+                # "username": self._client.email,
+                # "password": self._client.password,
+                "grant_type": "etp_rt_cookie",
+                # "scope": "offline_access",
                 "device_id": self._client.device_id,
-                "device_name": self._client.device_name,
+                # "device_name": self._client.device_name,
                 "device_type": self._client.device_type
             }, include_session=False
         )
