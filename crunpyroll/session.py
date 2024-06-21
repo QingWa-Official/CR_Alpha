@@ -43,13 +43,13 @@ class Session:
     async def get_cookie(self) -> str:
         pass
 
-    async def authorize(self, cookie: str) -> Optional[bool]:
+    async def authorize(self) -> Optional[bool]:
         response = await self._client.api_request(
             method="POST",
             endpoint="auth/v1/token",
             headers={
                 "Authorization": f"Basic {PUBLIC_TOKEN}",
-                "cookie": cookie
+                "cookie": self._client.cookies
             },
             payload={
                 # "username": self._client.email,
@@ -68,13 +68,13 @@ class Session:
         )
         return True
 
-    async def refresh(self, cookie) -> Optional[bool]:
+    async def refresh(self) -> Optional[bool]:
         response = await self._client.api_request(
             method="POST",
             endpoint="auth/v1/token",
             headers={
                 "Authorization": f"Basic {PUBLIC_TOKEN}",
-                "cookie": cookie
+                "cookie": self._client.cookies
             },
             payload={
                 "refresh_token": self.refresh_token,
