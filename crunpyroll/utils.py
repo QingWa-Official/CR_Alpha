@@ -13,12 +13,14 @@ DEVICE_ID = str(uuid4())
 WIDEVINE_UUID = "urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
 PLAYREADY_UUID = "urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95"
 
+
 def get_api_headers(headers: Optional[Dict]) -> Dict:
     return {
         "Connection": "Keep-Alive",
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": f"Crunchyroll/{APP_VERSION} Android/13 okhttp/4.12.0"
     } | (headers or {})
+
 
 def parse_segments(repr: Dict, template: Dict) -> List[str]:
     time = 0
@@ -47,15 +49,18 @@ def parse_segments(repr: Dict, template: Dict) -> List[str]:
             segments.append(segment_url)
     return segments
 
+
 def format_segment_url(url: str, obj: Dict) -> str:
     for key, value in obj.items():
         url = url.replace(f"${key}$", value)
     return url
 
-def get_date() -> datetime: 
+
+def get_date() -> datetime:
     return datetime.utcnow()
 
-def date_to_str(date: datetime) -> Optional[str]: 
+
+def date_to_str(date: datetime) -> Optional[str]:
     try:
         return "{}-{}-{}T{}:{}:{}Z".format(
             date.year, date.month,
@@ -64,6 +69,7 @@ def date_to_str(date: datetime) -> Optional[str]:
         )
     except Exception:
         return
+
 
 def str_to_date(string: str) -> Optional[datetime]:
     try:

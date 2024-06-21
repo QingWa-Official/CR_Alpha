@@ -10,8 +10,8 @@ from .errors import ClientNotAuthorized
 
 from typing import Optional
 
-sys.path.append("app/downloader/crdownloader/CR_Alpha")
-import crunpyroll
+sys.path.append("outertools/CR_Alpha")
+from outertools.CR_Alpha import crunpyroll
 
 
 class Session:
@@ -40,13 +40,16 @@ class Session:
         if date >= self.expiration:
             await self.refresh()
 
+    async def get_cookie(self) -> str:
+        pass
+
+
     async def authorize(self, cookie: str) -> Optional[bool]:
         response = await self._client.api_request(
             method="POST",
             endpoint="auth/v1/token",
             headers={
                 "Authorization": f"Basic {PUBLIC_TOKEN}",
-                "Etp-Anonymous-Id": "f4f2417f-6f61-4e8c-9df7-0f91fff3a7e5",
                 "cookie": cookie
             },
             payload={
