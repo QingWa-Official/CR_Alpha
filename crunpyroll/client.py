@@ -73,7 +73,7 @@ class Client(Object, Methods):
     async def start(self):
         if self.session.is_authorized:
             raise CrunpyrollException("Client is already authorized and started.")
-        return await self.session.authorize(cookie=self.cookies)
+        return await self.session.authorize()
 
     @staticmethod
     def parse_response(
